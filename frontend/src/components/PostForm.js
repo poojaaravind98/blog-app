@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { ADD_POST, GET_POSTS } from '../apollo/queries';
 
-function PostForm() {
+function PostForm({ onSuccess }) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [error, setError] = useState('');
@@ -26,6 +26,7 @@ function PostForm() {
       await addPost({ variables: { title: title.trim(), content: content.trim() } });
       setTitle('');
       setContent('');
+      if (onSuccess) onSuccess(); // let the parent (e.g. modal) know it's done
     } catch (err) {
       setError(err.message || 'Something went wrong while adding the post.');
     }
@@ -33,8 +34,6 @@ function PostForm() {
 
   return (
     <form className="post-form" onSubmit={handleSubmit}>
-      <h2>Add a New Post</h2>
-
       {error && <p className="form-error">{error}</p>}
 
       <div className="form-group">
